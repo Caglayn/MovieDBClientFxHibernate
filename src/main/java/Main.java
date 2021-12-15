@@ -1,14 +1,17 @@
 import controller.GenreEntityController;
 import controller.MovieEntityController;
+import controller.MoviesOverViewController;
 import controller.UserEntityController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import model.*;
 import org.hibernate.Session;
 import utils.HibernateUtil;
+import utils.ViewUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -20,55 +23,21 @@ public class Main extends Application {
         GenreEntityController genreController = new GenreEntityController();
         UserEntityController userController = new UserEntityController();
 
-        ArrayList<MovieEntity> movies = movieController.list();
+//        movieController.readFromFileAndWriteToDBAllMovies();
 
-        for (int i = 0; i<10;i++){
-            System.out.println(movies.get(i));
-            System.out.println(movies.get(i).getLink());
-            movies.get(i).getGenres().forEach(System.out::println);
-            movies.get(i).getRatings().forEach(System.out::println);
-            movies.get(i).getTags().forEach(System.out::println);
-            System.out.println("//////////////////////////////////////////////////////////////////////////////////");
-        }
+//        ArrayList<MovieEntity> movies = movieController.list();
+//
+//        for (int i = 7; i<10;i++){
+//            System.out.println(movies.get(i));
+//            System.out.println(movies.get(i).getLink());
+//            movies.get(i).getGenres().forEach(System.out::println);
+//            movies.get(i).getRatings().forEach(System.out::println);
+//            movies.get(i).getTags().forEach(System.out::println);
+//            System.out.println("//////////////////////////////////////////////////////////////////////////////////");
+//        }
 
-        /*genreController.insertAllGenresToDB();
-        userController.insertUsersToDB(5000);*/
-
-/*        MovieEntity entity = new MovieEntity("Matrix 3");
-        entity.setMovieId(5L);
-        TagEntity tag1 = new TagEntity().builder().tag("Harika").build();
-        TagEntity tag2 = new TagEntity().builder().tag("Muthis").build();
-        LinkEntity link = new LinkEntity().builder().imdbId("12345").tmdbId("54321").build();
-        GenreEntity genre1 = new GenreEntity(GenreType.Animation);
-        GenreEntity genre2 = new GenreEntity(GenreType.Crime);
-        RatingEntity rating1 = new RatingEntity().builder().rating(3.5).ratedAt(new Date(new Timestamp(System.currentTimeMillis()).getTime())).build();
-        RatingEntity rating2 = new RatingEntity().builder().rating(0.5).ratedAt(new Date(new Timestamp(System.currentTimeMillis()).getTime())).build();
-        UserEntity user1 = new UserEntity(1);
-        UserEntity user2 = new UserEntity(2);
-        entity.setLink(link);
-        entity.addTag(tag1);
-        entity.addTag(tag2);
-        tag1.setMovie(entity);
-        tag2.setMovie(entity);
-        entity.addGenre(genre1);
-        entity.addGenre(genre2);
-        genre1.addMovie(entity);
-        genre2.addMovie(entity);
-        entity.addRating(rating1);
-        entity.addRating(rating2);
-        rating1.setMovie(entity);
-        rating2.setMovie(entity);
-        rating1.setUser(user1);
-        rating2.setUser(user2);
-        user1.addRating(rating1);
-        user2.addRating(rating2);
-        tag1.setUser(user1);
-        tag2.setUser(user1);
-        user1.addTag(tag1);
-        user1.addTag(tag2);
-
-        movieController.create(entity);
-        System.out.println("Ekleme tamam");*/
+//        genreController.insertAllGenresToDB();
+//        userController.insertUsersToDB(1000);
 
 
         launch();
@@ -76,12 +45,37 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        initPrimaryStage(primaryStage);
+        initRootLayout();
+        showMoviesOverView();
+    }
+
+    private void initRootLayout() {
+        Stage primaryStage = ViewUtil.getInstance().getPrimaryStage();
         try {
             BorderPane root = (BorderPane) FXMLLoader.load(getClass().getResource("view/mainViews/MainView.fxml"));
-            Scene scene = new Scene(root, 800, 600);
+            ViewUtil.getInstance().setRootPane(root);
+            Scene scene =new Scene(root, 600, 400);
             scene.getStylesheets().add(getClass().getResource("view/mainViews/application.css").toExternalForm());
             primaryStage.setScene(scene);
+            ViewUtil.getInstance().setScene(scene);
             primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initPrimaryStage(Stage primaryStage) {
+        ViewUtil.getInstance().setPrimaryStage(primaryStage);
+    }
+
+    private void showMoviesOverView(){
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("view/mainViews/MoviesOverView.fxml"));
+        try {
+            AnchorPane moviesOverView = (AnchorPane) loader.load();
+            ViewUtil.getInstance().getRootPane().setCenter(moviesOverView);
+            MoviesOverViewController controller = loader.getController();
         } catch (Exception e) {
             e.printStackTrace();
         }
