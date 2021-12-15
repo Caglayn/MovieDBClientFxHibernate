@@ -1,21 +1,12 @@
-import controller.GenreEntityController;
-import controller.MovieEntityController;
-import controller.MoviesOverViewController;
-import controller.UserEntityController;
+import controller.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import model.*;
-import org.hibernate.Session;
-import utils.HibernateUtil;
 import utils.ViewUtil;
-
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
+import view.login.LoginController;
 
 public class Main extends Application {
     public static void main(String[] args) {
@@ -40,14 +31,14 @@ public class Main extends Application {
 //        userController.insertUsersToDB(1000);
 
 
-        launch();
+        launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         initPrimaryStage(primaryStage);
         initRootLayout();
-        showMoviesOverView();
+        showLoginView();
     }
 
     private void initRootLayout() {
@@ -58,6 +49,7 @@ public class Main extends Application {
             Scene scene =new Scene(root, 600, 400);
             scene.getStylesheets().add(getClass().getResource("view/mainViews/application.css").toExternalForm());
             primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
             ViewUtil.getInstance().setScene(scene);
             primaryStage.show();
         } catch (Exception e) {
@@ -69,13 +61,13 @@ public class Main extends Application {
         ViewUtil.getInstance().setPrimaryStage(primaryStage);
     }
 
-    private void showMoviesOverView(){
+    private void showLoginView(){
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("view/mainViews/MoviesOverView.fxml"));
+        loader.setLocation(getClass().getResource("view/login/LoginView.fxml"));
         try {
-            AnchorPane moviesOverView = (AnchorPane) loader.load();
-            ViewUtil.getInstance().getRootPane().setCenter(moviesOverView);
-            MoviesOverViewController controller = loader.getController();
+            AnchorPane loginView = (AnchorPane) loader.load();
+            ViewUtil.getInstance().getRootPane().setCenter(loginView);
+            LoginController controller = loader.getController();
         } catch (Exception e) {
             e.printStackTrace();
         }
